@@ -1,83 +1,66 @@
-def extrair_digitos(numero):
-    d1 = numero // 1000        # Milhar
-    d2 = (numero // 100) % 10  # Centena
-    d3 = (numero // 10) % 10   # Dezena
-    d4 = numero % 10           # Unidade
-    return d1, d2, d3, d4
-
-def contar_digito(digitos, digito):
-    count = 0
-    for d in digitos:
-        if d == digito:
-            count += 1
-    return count
-
-def criar_ndc(d1, d2, d3, d4):
-    digitos = [d1, d2, d3, d4]
-    ndc = 0
-    pos = 1000
-    for i in range(4):
-        menor = 9
-        for d in digitos:
-            if d < menor:
-                menor = d
-        ndc += menor * pos
-        digitos.remove(menor)
-        pos //= 10
-    return ndc
-
-def criar_ndd(d1, d2, d3, d4):
-    digitos = [d1, d2, d3, d4]
-    ndd = 0
-    pos = 1000
-    for i in range(4):
-        maior = 0
-        for d in digitos:
-            if d > maior:
-                maior = d
-        ndd += maior * pos
-        digitos.remove(maior)
-        pos //= 10
-    return ndd
-
-print("=== CONSTANTE DE KAPREKAR ===")
-
-try:
-    numero = int(input("Digite um número de 4 dígitos (0000-9999): "))
-except:
-    print("ERRO: Número deve ser inteiro!")
-    exit()
-
+numero = int(input("Digite um número de 4 dígitos (0000-9999): "))
 if numero < 0 or numero > 9999:
     print("ERRO: Número fora da faixa (0000-9999)!")
-    exit()
-numero = numero % 10000
-d1, d2, d3, d4 = extrair_digitos(numero)
-digitos = [d1, d2, d3, d4]
-tem_tres_iguais = False
-for digito in range(10):
-    if contar_digito(digitos, digito) >= 3:
-        tem_tres_iguais = True
-        break
-if tem_tres_iguais:
-    print("ERRO: Número possui muitos dígitos repetidos!")
-    exit()
-
-print(f"Número informado: {numero:04d}\n")
-
-iteracao = 1
-while True:
-    d1, d2, d3, d4 = extrair_digitos(numero)
-
-    ndc = criar_ndc(d1, d2, d3, d4)
-    ndd = criar_ndd(d1, d2, d3, d4)
-    resultado = ndd - ndc
-
-    print(f"Iteração {iteracao}: {ndd:04d} - {ndc:04d} = {resultado:04d}")
+else:
+    numero = numero % 10000
+    d1 = numero // 1000
+    d2 = (numero // 100) % 10
+    d3 = (numero // 10) % 10
+    d4 = numero % 10
+    digitos = [d1, d2, d3, d4]
+    tem_tres_iguais = False
     
-    if resultado == 6174:
-        print(f"\nConstante de Kaprekar (6174) atingida em {iteracao} iterações.")
-        break
+    for digito in range(10):
+        count = 0
+        for d in digitos:
+            if d == digito:
+                count += 1
+        if count >= 3:
+            tem_tres_iguais = True
+            break
     
-    numero = resultado
-    iteracao += 1
+    if tem_tres_iguais:
+        print("ERRO: Número possui muitos dígitos repetidos!")
+    else:
+        print(f"Número informado: {numero:04d}\n")
+        iteracao = 1
+        
+        while True:
+            d1 = numero // 1000
+            d2 = (numero // 100) % 10
+            d3 = (numero // 10) % 10
+            d4 = numero % 10
+            
+            digitos_crescente = [d1, d2, d3, d4]
+            ndc = 0
+            pos = 1000
+            for i in range(4):
+                menor = 9
+                for d in digitos_crescente:
+                    if d < menor:
+                        menor = d
+                ndc += menor * pos
+                digitos_crescente.remove(menor)
+                pos //= 10
+            
+            digitos_decrescente = [d1, d2, d3, d4]
+            ndd = 0
+            pos = 1000
+            for i in range(4):
+                maior = 0
+                for d in digitos_decrescente:
+                    if d > maior:
+                        maior = d
+                ndd += maior * pos
+                digitos_decrescente.remove(maior)
+                pos //= 10
+            
+            resultado = ndd - ndc
+            print(f"Iteração {iteracao}: {ndd:04d} - {ndc:04d} = {resultado:04d}")
+            
+            if resultado == 6174:
+                print(f"\nConstante de Kaprekar (6174) atingida em {iteracao} iterações.")
+                break
+            
+            numero = resultado
+            iteracao += 1
